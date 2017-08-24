@@ -4,8 +4,7 @@ const Speech = require("ssml-builder");
 const docClient = new AWS.DynamoDB.DocumentClient({ region: "us-east-1"});
 const dynamodbstreams = new AWS.DynamoDBStreams({apiVersion: "2012-08-10"});
 
-let lambdaCallback;
-let topics;
+let lambdaCallback, ageLow, ageHigh;
 let handlers = {
   "LaunchRequest": function() {
     let speech = new Speech();
@@ -15,21 +14,38 @@ let handlers = {
     let speechOutput = speech.ssml(true);
     this.emit(":ask", speechOutput)
   },
-  "TopicIntent": function () {
-    this.emit(":tell", "Your last photo contained, " + topics);
+  "AgeIntent": function () {
+    this.emit(":tell", "This person is somewhere around " + ageLow + " to " + ageHigh + " years old");
+  },
+  "EmotionIntent": function () {
+    this.emit(":tell", "The latest photo shows someone who looks " + emotionType1 + " with a " + emotionConf1 + " percent confidence");
+  },
+  "GenderIntent": function () {
+    this.emit(":tell", "I can say with " + genderConf + " percent confidence that this person is " + genderValue);
+  },
+  "AMAZON.CancelIntent": function() {
+    this.emit(":tell", "Bye bye Felicia");
   },
   "AMAZON.HelpIntent": function() {
     this.emit(":tell", "Ask me what is in your last photo!");
+  },
+  "AMAZON.StopIntent": function() {
+    this.emit(":tell", "Peace");
   }
 }
 
 exports.handler = (event, context, callback) => {
   lambdaCallback = callback;
-  // getTopics(callback, function() {
-  //   alexaFunction(event, context);
-  // });
   getLatestFace()
     .then(function(data) {
+      target = data.Items[0]
+      emotionType1 = target.emotionType1;
+      emotionConf1 = Math.round(target.emotionConf1);
+      ageLow = target.ageLow;
+      ageHigh = target.ageHigh;
+      genderValue = target.genderValue;
+      genderConf = target.genderConf;
+      alexaFunction(event, context);
       lambdaCallback(null, data);
     }).catch(function(err) {
       lambdaCallback(err, null);
