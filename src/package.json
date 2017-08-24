@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "alexa-sdk": "^1.0.12",
-    "aws-sdk": "^2.100.0"
+    "aws-sdk": "^2.100.0",
+    "ssml-builder": "^0.2.4"
   }
 }
