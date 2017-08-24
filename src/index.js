@@ -28,19 +28,7 @@ exports.handler = (event, context, callback) => {
   // getTopics(callback, function() {
   //   alexaFunction(event, context);
   // });
-  scanPhotoTable();
-};
-
-function scanPhotoTable() {
-  params = {
-    TableName: "photosV2",
-    ExpressionAttributeValues: { ":v1": 3 },
-    KeyConditionExpression: "photoId = :v1",
-    ScanIndexForward: true,
-    Limit: 1
-  };
-
-  docClient.query(params).promise()
+  getLatestFace()
     .then(function(data) {
       lambdaCallback(null, data);
     }).catch(function(err) {
@@ -48,27 +36,16 @@ function scanPhotoTable() {
     });
 };
 
-function getTopics(callback, alexaCallback) {
-  setTimeout (function() {
-    let params = {
-      TableName: "photos",
-      Key: {
-        photoId: 2
-      }
-    };
+function getLatestFace() {
+  params = {
+    TableName: "facesV2",
+    ExpressionAttributeValues: { ":v1": 1 },
+    KeyConditionExpression: "faceId = :v1",
+    ScanIndexForward: false,
+    Limit: 1
+  };
 
-    docClient.get(params, function(err, data) {
-      if(err) {
-        callback(err, null);
-      } else {
-        topics = data["Item"]["topics"];
-        callback(null, topics);
-      }
-    });
-
-    alexaCallback()
-
-  }, 1000)
+  return docClient.query(params).promise()
 };
 
 function alexaFunction(event, context) {
