@@ -20,17 +20,22 @@ let handlers = {
     this.emit(":ask", speechOutput)
   },
   "AgeIntent": function () {
-    this.emit(":tell", "This person is somewhere around " + ageLow + " to " + ageHigh + " years old");
+    this.emit(":ask", "This person is somewhere around " + ageLow + " to " + ageHigh + " years old");
   },
   "EmotionIntent": function () {
-    this.emit(":tell", "The latest photo shows someone who looks " + emotionType1 + " with a " + emotionConf1 + " percent confidence");
+    let speech = new Speech();
+    speech.say("To me, this person looks " + emotionType1)
+    speech.pause("200ms")
+    speech.say("I'm " + emotionConf1 + " percent confident about that")
+    let speechOutput = speech.ssml(true);
+    this.emit(":tell", speechOutput)
   },
   "AvgAgeByFirstNameIntent": function() {
     alexa = this
     name = alexa.event.request.intent.slots.first_name.value
     avgAgeOfName(name)
       .then(function(age) {
-        alexa.emit(":tell", "From my records, I would estimate " + name + " is " + age + "years old");
+        alexa.emit(":tell", "From my records, I would estimate " + name + " is " + age + " years old");
       }).catch(function(err) {
         alexa.emit(":tell", "I am sorry but I could not estimate the average ago of " + name);
       });
@@ -57,7 +62,7 @@ let handlers = {
       });
   },
   "GenderIntent": function () {
-    this.emit(":tell", "I can say with " + genderConf + " percent confidence that this person is " + genderValue);
+    this.emit(":ask", "I can say with " + Math.round(genderConf) + " percent confidence that this person is " + genderValue);
   },
   "LabelsIntent": function () {
     this.emit(":tell", "In this photo, I see " + labels);
@@ -96,7 +101,7 @@ function avgAgeOfName(name) {
 
 function scanForName(name) {
   params = {
-    TableName: "facesV2",
+    TableName: "facesV3",
     FilterExpression: "filename = :f1",
     ExpressionAttributeValues: { ":f1": name }
   }
@@ -110,7 +115,7 @@ function updateLatestEntry(name) {
             rawParams = data["Items"][0]
             rawParams["filename"] = name
             params = {
-              TableName: "facesV2",
+              TableName: "facesV3",
               Item: rawParams
             }
 
@@ -143,7 +148,7 @@ function loadData(event, context) {
 
 function getLatestEntry() {
   params = {
-    TableName: "facesV2",
+    TableName: "facesV3",
     ExpressionAttributeValues: { ":v1": 1 },
     KeyConditionExpression: "faceId = :v1",
     ScanIndexForward: false,
