@@ -1,0 +1,52 @@
+{
+  "intents": [
+    {
+      "intent": "AgeIntent"
+    },
+    {
+      "intent": "EmotionIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "first_name",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "AvgAgeByFirstNameIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "first_name",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "FirstNameIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "first_name",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "FirstNameCountIntent"
+    },
+    {
+      "intent": "GenderIntent"
+    },
+    {
+      "intent": "LabelsIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    }
+  ]
+}

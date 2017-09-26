@@ -1,0 +1,7 @@
+AgeIntent               estimated age
+EmotionIntent           what are they feeling
+AvgAgeByFirstNameIntent estimate age from all records of {first_name}
+FirstNameIntent         save this user as {first_name}
+FirstNameCountIntent    how many photos of {first_name} do I have
+GenderIntent            what else can you tell me
+LabelsIntent            what do you see in this photo
