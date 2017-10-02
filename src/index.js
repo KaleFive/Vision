@@ -1,3 +1,4 @@
+const config = require("config");
 const Alexa = require("alexa-sdk");
 const AWS = require("aws-sdk");
 const Speech = require("ssml-builder");
@@ -11,11 +12,11 @@ let handlers = {
     let speech = new Speech();
     speech.say("Hello")
     speech.pause("200ms")
-    speech.say("My name is Paul Bettany, also known as")
+    speech.say("this is the vision app.")
     speech.pause("100ms")
-    speech.say("the vision")
+    speech.say("when you upload photos to your S3 bucket, you can ask me about them here.")
     speech.pause("500ms")
-    speech.say("What would you like to know?")
+    speech.say("I see there is a new user, what would you like to know?")
     let speechOutput = speech.ssml(true);
     this.emit(":ask", speechOutput)
   },
@@ -83,46 +84,10 @@ exports.handler = (event, context, callback) => {
   loadData(event, context);
 };
 
-function avgAgeOfName(name) {
-  return scanForName(name)
-          .then(function(data) {
-            totalCount = data["Count"]
-            totalAgeNumber = 0
-            data["Items"].forEach(function(row) {
-              totalAgeNumber = totalAgeNumber + row.ageLow
-            });
-            return new Promise(function(resolve, reject) {
-              resolve(Math.round(totalAgeNumber / totalCount))
-            })
-          }).catch(function(err) {
-            lambdaCallback(err, null);
-          });
-};
-
-function scanForName(name) {
-  params = {
-    TableName: "facesV3",
-    FilterExpression: "filename = :f1",
-    ExpressionAttributeValues: { ":f1": name }
-  }
-
-  return docClient.scan(params).promise();
-};
-
-function updateLatestEntry(name) {
-  return getLatestEntry()
-          .then(function(data) {
-            rawParams = data["Items"][0]
-            rawParams["filename"] = name
-            params = {
-              TableName: "facesV3",
-              Item: rawParams
-            }
-
-            return docClient.put(params).promise()
-          }).catch(function(err) {
-            lambdaCallback(err, null);
-          });
+function alexaFunction(event, context) {
+  let alexa = Alexa.handler(event, context);
+  alexa.registerHandlers(handlers);
+  alexa.execute();
 };
 
 function loadData(event, context) {
@@ -146,9 +111,51 @@ function loadData(event, context) {
     });
 };
 
+function avgAgeOfName(name) {
+  return scanForName(name)
+          .then(function(data) {
+            totalCount = data["Count"]
+            totalAgeNumber = 0
+            data["Items"].forEach(function(row) {
+              totalAgeNumber = totalAgeNumber + row.ageLow
+            });
+            return new Promise(function(resolve, reject) {
+              resolve(Math.round(totalAgeNumber / totalCount))
+            })
+          }).catch(function(err) {
+            lambdaCallback(err, null);
+          });
+};
+
+function scanForName(name) {
+  params = {
+    TableName: config.tableName,
+    FilterExpression: "filename = :f1",
+    ExpressionAttributeValues: { ":f1": name }
+  }
+
+  return docClient.scan(params).promise();
+};
+
+function updateLatestEntry(name) {
+  return getLatestEntry()
+          .then(function(data) {
+            rawParams = data["Items"][0]
+            rawParams["filename"] = name
+            params = {
+              TableName: config.tableName,
+              Item: rawParams
+            }
+
+            return docClient.put(params).promise()
+          }).catch(function(err) {
+            lambdaCallback(err, null);
+          });
+};
+
 function getLatestEntry() {
   params = {
-    TableName: "facesV3",
+    TableName: config.tableName,
     ExpressionAttributeValues: { ":v1": 1 },
     KeyConditionExpression: "faceId = :v1",
     ScanIndexForward: false,
@@ -158,12 +165,7 @@ function getLatestEntry() {
   return docClient.query(params).promise()
 };
 
-function alexaFunction(event, context) {
-  let alexa = Alexa.handler(event, context);
-  alexa.registerHandlers(handlers);
-  alexa.execute();
-};
-
+// all the code below is to use dynamo streams for retrieving latest table row
 function getLatestFromStream() {
   let streamArn = "arn:aws:dynamodb:us-east-1:351331127751:table/photos/stream/2017-08-24T04:37:16.067"
   let params = {

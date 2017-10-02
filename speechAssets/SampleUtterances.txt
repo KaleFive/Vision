@@ -1,7 +1,26 @@
-AgeIntent               estimated age
+AgeIntent               what is this person's estimated age
+AgeIntent               what is this person's age
+AgeIntent               how old is this person
+AgeIntent               how old is he
+AgeIntent               how old is she
 EmotionIntent           what are they feeling
+EmotionIntent           what do you think they are feeling
+EmotionIntent           how are they doing
+EmotionIntent           how do they look
+EmotionIntent           do they look happy
+EmotionIntent           do they look sad
 AvgAgeByFirstNameIntent estimate age from all records of {first_name}
+AvgAgeByFirstNameIntent estimate the age of {first_name}
+AvgAgeByFirstNameIntent how old do you think {first_name} is
+AvgAgeByFirstNameIntent how old is {first_name}
 FirstNameIntent         save this user as {first_name}
+FirstNameIntent         remember this user as {first_name}
+FirstNameIntent         keep this user in my database as {first_name}
+FirstNameIntent         keep this user in my files as {first_name}
 FirstNameCountIntent    how many photos of {first_name} do I have
-GenderIntent            what else can you tell me
+FirstNameCountIntent    have i saved other photos of {first_name}
+FirstNameCountIntent    do i have other saved photos of {first_name}
+GenderIntent            are they male or female
+GenderIntent            what is this person's gender
 LabelsIntent            what do you see in this photo
+LabelsIntent            what is in this photo
