@@ -1,9 +1,10 @@
 # Vision
-Lambda function executed through Alexa to pull from DynamoDB 
+Lambda function executed through Alexa to pull from DynamoDB
 
 ## Using Vision
 
-After creating a lambda function grab the zip version of this code by running
+Create a lambda function in your AWS account.
+Grab the zip version of this code by `cd`-ing into the `src` directory and running
 ```
 zip -r ../../lambda_vision.zip *
 ```
