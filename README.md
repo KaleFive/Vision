@@ -10,3 +10,4 @@ zip -r ../../lambda_vision.zip *
 ```
 Then upload this zip file to your new lambda function.
 
+![vision](https://user-images.githubusercontent.com/11951665/31162218-0026d2b6-a8aa-11e7-9716-3e1886691ec2.jpg)
